@@ -2,7 +2,6 @@ import express,{ RequestHandler, ErrorRequestHandler } from 'express';
 import cors from 'cors';
 
 const bodyParser = require('body-parser')
-const { body, validationResult } = require('express-validator');
 
 require('dotenv').config();
 
