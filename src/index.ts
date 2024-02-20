@@ -19,14 +19,15 @@ app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// insert attendee into database
+// insert team score into the database
 app.post('/scores', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
-    const insertQuery = 'INSERT INTO stp.machathon_scores VALUES ($1, $2, $3, $4, TODO: sum of 3 and 4, NOW());';
-    const {team_name, team_code, lap1_time, lap2_time} = req.body;
+    const insertQuery = 'INSERT INTO stp.machathon_scores VALUES ($1, $2, $3, $4, $5, $6, NOW());';
+    const {team_name, team_code, first_laptime, second_laptime, zip_file} = req.body;
     //
-    dbPool.query(insertQuery, [team_name, team_code, lap1_time, lap2_time], (error, results) => {
+    dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime,
+        first_laptime+second_laptime, zip_file], (error, results) => {
         if(error){
             res.status(500).json({
                 success: false,
@@ -43,7 +44,7 @@ app.post('/scores', (req, res) => {
     })
 });
 
-// Get all registered people
+// Get all database scores
 app.get('/scores', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     dbPool.query('SELECT * FROM stp.machathon_scores;', (error, results) => {
@@ -61,7 +62,7 @@ app.get('/scores', (req, res) => {
     })
 });
 
-// A cron job endpoint to keep the server running
+// A cron job endpoint for maintaining the server
 app.get('/cron', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     console.log("WAKE UP");
@@ -69,6 +70,8 @@ app.get('/cron', (req, res) => {
         state: "success"
     });
 })
+
+
 // Report server errors
 const errHandler: ErrorRequestHandler = (error, req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");

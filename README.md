@@ -27,9 +27,9 @@ A single table to store teams submissions:
 |----|----|
 | team_name  | String |
 | team_code | String |
-| first_lap_time | Float |
-| second_lap_time | Float |
-| total_lap_time| Float |
+| first_laptime | Float |
+| second_laptime | Float |
+| total_laptime| Float |
 | zip_file | String |
 
 
@@ -38,10 +38,10 @@ A single table to store teams submissions:
 CREATE TABLE machathon_scores (
   team_name VARCHAR (50) NOT NULL,
   team_code VARCHAR (50) PRIMARY KEY,
-  first_lap_time NUMERIC(10, 5) NOT NULL,
-  second_lap_time NUMERIC(10, 5) NOT NULL,
-  total_lap_time NUMERIC(10, 5) NOT NULL,
-  zip_file TODO:checkFileType NOT NULL,
+  first_laptime NUMERIC(10, 5) NOT NULL,
+  second_laptime NUMERIC(10, 5) NOT NULL,
+  total_laptime NUMERIC(10, 5) NOT NULL,
+  zip_file bytea NOT NULL,
   created_at TIMESTAMP NOT NULL
 );
 ```
