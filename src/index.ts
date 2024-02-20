@@ -25,7 +25,7 @@ app.post('/scores', (req, res) => {
     // insert into database
     const insertQuery = 'INSERT INTO stp.machathon_scores (team_name, team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, $5, NOW());';
     const {team_name, team_code, first_laptime, second_laptime, zip_file} = req.body;
-    //
+    ////
     dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime, zip_file], (error, results) => {
         if(error){
             res.status(500).json({
