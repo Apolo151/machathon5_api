@@ -29,19 +29,19 @@ A single table to store teams submissions:
 | team_code | String |
 | first_lap_time | Float |
 | second_lap_time | Float |
+| total_lap_time| Float |
 | zip_file | String |
 
 
 **Example Create Table Command**
 ```bash
-CREATE TABLE machathon_summit (
-  name VARCHAR (50) NOT NULL,
-  phone VARCHAR(20) NOT NULL,
-  email VARCHAR (255) PRIMARY KEY,
-  national_id NUMERIC(14) UNIQUE,
-  university VARCHAR(255) NOT NULL,
-  faculty VARCHAR(255) NOT NULL,
-  grad_year NUMERIC(4) NOT NULL,
+CREATE TABLE machathon_scores (
+  team_name VARCHAR (50) NOT NULL,
+  team_code VARCHAR (50) PRIMARY KEY,
+  first_lap_time NUMERIC(10, 5) NOT NULL,
+  second_lap_time NUMERIC(10, 5) NOT NULL,
+  total_lap_time NUMERIC(10, 5) NOT NULL,
+  zip_file TODO:checkFileType NOT NULL,
   created_at TIMESTAMP NOT NULL
 );
 ```

@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.post('/scores', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
-    const insertQuery = 'INSERT INTO stp.machathon_summit VALUES ($1, $2, $3, $4, TODO: sum of 3 and 4, NOW());';
+    const insertQuery = 'INSERT INTO stp.machathon_scores VALUES ($1, $2, $3, $4, TODO: sum of 3 and 4, NOW());';
     const {team_name, team_code, lap1_time, lap2_time} = req.body;
     //
     dbPool.query(insertQuery, [team_name, team_code, lap1_time, lap2_time], (error, results) => {
