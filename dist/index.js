@@ -7,7 +7,6 @@ exports.dbPool = void 0;
 var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 var bodyParser = require('body-parser');
-var _a = require('express-validator'), body = _a.body, validationResult = _a.validationResult;
 require('dotenv').config();
 var pg_1 = require("pg");
 // TODO: Change to prod DB
