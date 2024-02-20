@@ -11,21 +11,22 @@ require('dotenv').config();
 var pg_1 = require("pg");
 // TODO: Change to prod DB
 exports.dbPool = new pg_1.Pool({
-    connectionString: process.env.PROD_DB_CONNECTION_STRING
+    connectionString: process.env.TEST_DB_CONNECTION_STRING
 });
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// insert attendee into database
+// insert team score into the database
 app.post('/scores', function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
-    var insertQuery = 'INSERT INTO stp.machathon_summit VALUES ($1, $2, $3, $4, TODO: sum of 3 and 4, NOW());';
-    var _a = req.body, team_name = _a.team_name, team_code = _a.team_code, lap1_time = _a.lap1_time, lap2_time = _a.lap2_time;
+    var insertQuery = 'INSERT INTO stp.machathon_scores VALUES ($1, $2, $3, $4, $5, $6, NOW());';
+    var _a = req.body, team_name = _a.team_name, team_code = _a.team_code, first_laptime = _a.first_laptime, second_laptime = _a.second_laptime, zip_file = _a.zip_file;
     //
-    exports.dbPool.query(insertQuery, [team_name, team_code, lap1_time, lap2_time], function (error, results) {
+    exports.dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime,
+        first_laptime + second_laptime, zip_file], function (error, results) {
         if (error) {
             res.status(500).json({
                 success: false,
@@ -41,7 +42,7 @@ app.post('/scores', function (req, res) {
         }
     });
 });
-// Get all registered people
+// Get all database scores
 app.get('/scores', function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     exports.dbPool.query('SELECT * FROM stp.machathon_scores;', function (error, results) {
@@ -58,7 +59,7 @@ app.get('/scores', function (req, res) {
         }
     });
 });
-// A cron job endpoint to keep the server running
+// A cron job endpoint for maintaining the server
 app.get('/cron', function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     console.log("WAKE UP");

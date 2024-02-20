@@ -36,12 +36,12 @@ A single table to store teams submissions:
 **Example Create Table Command**
 ```bash
 CREATE TABLE machathon_scores (
-  team_name VARCHAR (50) NOT NULL,
-  team_code VARCHAR (50) PRIMARY KEY,
-  first_laptime NUMERIC(10, 5) NOT NULL,
-  second_laptime NUMERIC(10, 5) NOT NULL,
-  total_laptime NUMERIC(10, 5) NOT NULL,
-  zip_file bytea NOT NULL,
-  created_at TIMESTAMP NOT NULL
+team_name VARCHAR (50) NOT NULL,
+team_code VARCHAR (50) PRIMARY KEY,
+first_laptime NUMERIC(10, 5) NOT NULL,
+second_laptime NUMERIC(10, 5) NOT NULL,
+total_laptime NUMERIC(10, 5) GENERATED ALWAYS AS (first_laptime + second_laptime) STORED,
+zip_file bytea NOT NULL,
+created_at TIMESTAMP NOT NULL
 );
 ```
