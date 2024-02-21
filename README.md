@@ -42,12 +42,13 @@ A REST API that handles the submissions of the Machathon 5.00 Autonomous Car Rac
 **Example Create Table Command**
 ```bash
 CREATE TABLE machathon_scores (
-team_code VARCHAR (50) PRIMARY KEY,
+team_code VARCHAR (50),
 first_laptime NUMERIC(10, 5) NOT NULL,
 second_laptime NUMERIC(10, 5) NOT NULL,
 total_laptime NUMERIC(10, 5) GENERATED ALWAYS AS (first_laptime + second_laptime) STORED,
 zip_file BYTEA,
-created_at TIMESTAMP NOT NULL
+created_at TIMESTAMP NOT NULL,
+PRIMARY KEY (team_code, created_at)
 );
 
 CREATE TABLE machathon_teams (
