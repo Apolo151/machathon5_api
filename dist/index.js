@@ -8,28 +8,37 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+//const upload = multer({ dest: './' })
 require('dotenv').config();
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        let filename = 'solution.zip';
+        req.body.file = filename;
+        cb(null, filename);
+    }
+});
+var upload = multer({ storage: storage });
 const pg_1 = require("pg");
-// TODO: Change to prod DB
 exports.dbPool = new pg_1.Pool({
-    connectionString: process.env.TEST_DB_CONNECTION_STRING
+    connectionString: process.env.DB_CONNECTION_STRING
 });
 const app = (0, express_1.default)();
-app.use(multer);
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 // insert team score into the database
-app.post('/scores', upload.any(), (req, res, next) => {
+app.post('/scores', upload.any(), (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
-    const insertQuery = 'INSERT INTO stp.machathon_scores (team_name, team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, $5, NOW());';
-    const { team_name, team_code, first_laptime, second_laptime } = req.body;
-    const zip_file = null;
-    ////
-    exports.dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime, zip_file], (error, results) => {
+    const insertQuery = 'INSERT INTO stp.machathon_scores (team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, NOW());';
+    const { team_code, first_laptime, second_laptime } = JSON.parse(req.body.body);
+    const zip_file = req.body.file;
+    //
+    exports.dbPool.query(insertQuery, [team_code, first_laptime, second_laptime, zip_file], (error, results) => {
         if (error) {
             res.status(500).json({
                 success: false,
@@ -48,7 +57,7 @@ app.post('/scores', upload.any(), (req, res, next) => {
 // Get all database scores
 app.get('/scores', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    exports.dbPool.query('SELECT * FROM stp.machathon_scores;', (error, results) => {
+    exports.dbPool.query('SELECT mt.team_name, ms.total_laptime FROM stp.machathon_scores ms JOIN stp.machathon_teams mt ON ms.team_code=mt.team_code;', (error, results) => {
         if (error) {
             res.status(500).json({
                 success: false,

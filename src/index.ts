@@ -2,6 +2,7 @@ import express,{ RequestHandler, ErrorRequestHandler } from 'express';
 import cors from 'cors';
 
 const bodyParser = require('body-parser')
+const path = require("path");
 const multer  = require('multer')
 //const upload = multer({ dest: './' })
 require('dotenv').config();
@@ -9,15 +10,12 @@ require('dotenv').config();
 var storage = multer.diskStorage({
     destination: function (req:any, file:any, cb:any) {
   
-      cb(null, './uploads/')
+      cb(null, path.join(__dirname, "../uploads"))
     },
 
     filename: function (req:any, file:any, cb:any) {
   
-      let filename = 'solution.zip';
-       req.body.file = filename
-  
-      cb(null, filename)
+      cb(null, file.originalname)
     }
 })
 
