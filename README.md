@@ -12,16 +12,15 @@ A REST API that handles the submissions of the Machathon 5.00 Autonomous Car Rac
 
 ```json
 {
-"team_name": "",
 "team_code": "",
-"first_lap_time": "",
-"second_lap_time": "",
+"first_laptime": "",
+"second_laptime": "",
 "zip_file": ""
 }
 ```
 
 ## Database Schema
-A single table to store teams submissions:
+- A table to store teams submissions:
 
 | Column | Type |
 |----|----|
@@ -33,15 +32,26 @@ A single table to store teams submissions:
 | zip_file | String |
 
 
+- A table to store team names and codes
+
+| Column | Type |
+|-----|-----|
+|team_name | String |
+|team_code | String |
+
 **Example Create Table Command**
 ```bash
 CREATE TABLE machathon_scores (
-team_name VARCHAR (50) NOT NULL,
 team_code VARCHAR (50) PRIMARY KEY,
 first_laptime NUMERIC(10, 5) NOT NULL,
 second_laptime NUMERIC(10, 5) NOT NULL,
 total_laptime NUMERIC(10, 5) GENERATED ALWAYS AS (first_laptime + second_laptime) STORED,
-zip_file bytea NOT NULL,
+zip_file BYTEA,
 created_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE machathon_teams (
+team_name VARCHAR(50) NOT NULL,
+team_code VARCHAR(50) PRIMARY KEY
 );
 ```
