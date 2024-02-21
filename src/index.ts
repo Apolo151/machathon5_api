@@ -1,17 +1,17 @@
 import express,{ RequestHandler, ErrorRequestHandler } from 'express';
 import cors from 'cors';
 
-//const bodyParser = require('body-parser')
-const multer  = require('multer');
+const bodyParser = require('body-parser')
+const multer  = require('multer')
+//const upload = multer({ dest: './' })
+require('dotenv').config();
 
 var storage = multer.diskStorage({
-
     destination: function (req:any, file:any, cb:any) {
   
-      cb(null, '/filepath')
+      cb(null, './uploads/')
     },
-  
-  
+
     filename: function (req:any, file:any, cb:any) {
   
       let filename = 'solution.zip';
@@ -19,37 +19,32 @@ var storage = multer.diskStorage({
   
       cb(null, filename)
     }
-  })
-  
-//const upload = multer({ dest: 'uploads/' });
+})
 
-var upload = multer({storage: storage});
+var upload = multer({ storage: storage });
 
-require('dotenv').config();
 
 import { Pool } from 'pg';
 
-// TODO: Change to prod DB
 export const dbPool = new Pool({
-    connectionString: process.env.TEST_DB_CONNECTION_STRING
+    connectionString: process.env.DB_CONNECTION_STRING
 });
 
 const app = express();
-app.use(multer)
 app.use(cors());
-//app.use(express.json())
-//app.use(bodyParser.urlencoded({ extended: false }));
-//app.use(bodyParser.json());
+app.use(express.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // insert team score into the database
 app.post('/scores', upload.any(), (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
-    const insertQuery = 'INSERT INTO stp.machathon_scores (team_name, team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, $5, NOW());';
-    const {team_name, team_code, first_laptime, second_laptime} = req.body;
+    const insertQuery = 'INSERT INTO stp.machathon_scores (team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, NOW());';
+    const {team_code, first_laptime, second_laptime} = JSON.parse(req.body.body);
     const zip_file = req.body.file;
-    ////
-    dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime, zip_file], (error, results) => {
+    //
+    dbPool.query(insertQuery, [team_code, first_laptime, second_laptime, zip_file], (error, results) => {
         if(error){
             res.status(500).json({
                 success: false,
@@ -69,7 +64,7 @@ app.post('/scores', upload.any(), (req, res) => {
 // Get all database scores
 app.get('/scores', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    dbPool.query('SELECT * FROM stp.machathon_scores;', (error, results) => {
+    dbPool.query('SELECT mt.team_name, ms.total_laptime FROM stp.machathon_scores ms JOIN stp.machathon_teams mt ON ms.team_code=mt.code;', (error, results) => {
         if(error){
             res.status(500).json({
                 success: false,

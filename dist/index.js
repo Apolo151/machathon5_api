@@ -4,41 +4,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dbPool = void 0;
-var express_1 = __importDefault(require("express"));
-var cors_1 = __importDefault(require("cors"));
-//const bodyParser = require('body-parser')
-var multer = require('multer');
-var storage = multer.diskStorage({
-    destination: function (request, file, callback) {
-        callback(null, './uploads/');
-    },
-    filename: function (request, file, callback) {
-        console.log(file);
-        callback(null, file.originalname);
-    }
-});
-var upload = multer({ storage: storage });
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 require('dotenv').config();
-var pg_1 = require("pg");
+const pg_1 = require("pg");
 // TODO: Change to prod DB
 exports.dbPool = new pg_1.Pool({
     connectionString: process.env.TEST_DB_CONNECTION_STRING
 });
-var app = (0, express_1.default)();
+const app = (0, express_1.default)();
 app.use(multer);
 app.use((0, cors_1.default)());
-//app.use(express.json())
-//app.use(bodyParser.urlencoded({ extended: false }));
-//app.use(bodyParser.json());
+app.use(express_1.default.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // insert team score into the database
-app.post('/scores', upload.any(), function (req, res) {
+app.post('/scores', upload.any(), (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
-    var insertQuery = 'INSERT INTO stp.machathon_scores (team_name, team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, $5, NOW());';
-    var _a = req.body, team_name = _a.team_name, team_code = _a.team_code, first_laptime = _a.first_laptime, second_laptime = _a.second_laptime;
-    var zip_file = req.file;
+    const insertQuery = 'INSERT INTO stp.machathon_scores (team_name, team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, $5, NOW());';
+    const { team_name, team_code, first_laptime, second_laptime } = req.body;
+    const zip_file = null;
     ////
-    exports.dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime, zip_file], function (error, results) {
+    exports.dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime, zip_file], (error, results) => {
         if (error) {
             res.status(500).json({
                 success: false,
@@ -55,9 +46,9 @@ app.post('/scores', upload.any(), function (req, res) {
     });
 });
 // Get all database scores
-app.get('/scores', function (req, res) {
+app.get('/scores', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    exports.dbPool.query('SELECT * FROM stp.machathon_scores;', function (error, results) {
+    exports.dbPool.query('SELECT * FROM stp.machathon_scores;', (error, results) => {
         if (error) {
             res.status(500).json({
                 success: false,
@@ -72,7 +63,7 @@ app.get('/scores', function (req, res) {
     });
 });
 // A cron job endpoint for maintaining the server
-app.get('/cron', function (req, res) {
+app.get('/cron', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     console.log("WAKE UP");
     res.status(200).json({
@@ -80,13 +71,13 @@ app.get('/cron', function (req, res) {
     });
 });
 // Report server errors
-var errHandler = function (error, req, res, next) {
+const errHandler = (error, req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     console.error("uncaught exception", error);
     return res.status(500).send("An unexpected error has occurred, please try again.");
 };
 app.use(errHandler);
 // Run server on server port 
-app.listen(process.env.SERVER_PORT, function () {
-    console.log("Listening on port ".concat(process.env.SERVER_PORT));
+app.listen(process.env.SERVER_PORT, () => {
+    console.log(`Listening on port ${process.env.SERVER_PORT}`);
 });
