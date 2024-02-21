@@ -6,7 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.dbPool = void 0;
 var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
-var bodyParser = require('body-parser');
+//const bodyParser = require('body-parser')
+var multer = require('multer');
+var storage = multer.diskStorage({
+    destination: function (request, file, callback) {
+        callback(null, './uploads/');
+    },
+    filename: function (request, file, callback) {
+        console.log(file);
+        callback(null, file.originalname);
+    }
+});
+var upload = multer({ storage: storage });
 require('dotenv').config();
 var pg_1 = require("pg");
 // TODO: Change to prod DB
@@ -14,19 +25,20 @@ exports.dbPool = new pg_1.Pool({
     connectionString: process.env.TEST_DB_CONNECTION_STRING
 });
 var app = (0, express_1.default)();
+app.use(multer);
 app.use((0, cors_1.default)());
-app.use(express_1.default.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+//app.use(express.json())
+//app.use(bodyParser.urlencoded({ extended: false }));
+//app.use(bodyParser.json());
 // insert team score into the database
-app.post('/scores', function (req, res) {
+app.post('/scores', upload.any(), function (req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
-    var insertQuery = 'INSERT INTO stp.machathon_scores VALUES ($1, $2, $3, $4, $5, $6, NOW());';
-    var _a = req.body, team_name = _a.team_name, team_code = _a.team_code, first_laptime = _a.first_laptime, second_laptime = _a.second_laptime, zip_file = _a.zip_file;
-    //
-    exports.dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime,
-        first_laptime + second_laptime, zip_file], function (error, results) {
+    var insertQuery = 'INSERT INTO stp.machathon_scores (team_name, team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, $5, NOW());';
+    var _a = req.body, team_name = _a.team_name, team_code = _a.team_code, first_laptime = _a.first_laptime, second_laptime = _a.second_laptime;
+    var zip_file = req.file;
+    ////
+    exports.dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime, zip_file], function (error, results) {
         if (error) {
             res.status(500).json({
                 success: false,

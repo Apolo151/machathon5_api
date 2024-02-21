@@ -1,7 +1,29 @@
 import express,{ RequestHandler, ErrorRequestHandler } from 'express';
 import cors from 'cors';
 
-const bodyParser = require('body-parser')
+//const bodyParser = require('body-parser')
+const multer  = require('multer');
+
+var storage = multer.diskStorage({
+
+    destination: function (req:any, file:any, cb:any) {
+  
+      cb(null, '/filepath')
+    },
+  
+  
+    filename: function (req:any, file:any, cb:any) {
+  
+      let filename = 'solution.zip';
+       req.body.file = filename
+  
+      cb(null, filename)
+    }
+  })
+  
+//const upload = multer({ dest: 'uploads/' });
+
+var upload = multer({storage: storage});
 
 require('dotenv').config();
 
@@ -9,24 +31,25 @@ import { Pool } from 'pg';
 
 // TODO: Change to prod DB
 export const dbPool = new Pool({
-    connectionString: process.env.PROD_DB_CONNECTION_STRING
+    connectionString: process.env.TEST_DB_CONNECTION_STRING
 });
 
 const app = express();
-
+app.use(multer)
 app.use(cors());
-app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+//app.use(express.json())
+//app.use(bodyParser.urlencoded({ extended: false }));
+//app.use(bodyParser.json());
 
 // insert team score into the database
-app.post('/scores', (req, res) => {
+app.post('/scores', upload.any(), (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
-    const insertQuery = 'INSERT INTO stp.machathon_scores (team_name, team_code, first_laptime, second_laptime, created_at) VALUES ($1, $2, $3, $4, NOW());';
+    const insertQuery = 'INSERT INTO stp.machathon_scores (team_name, team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, $5, NOW());';
     const {team_name, team_code, first_laptime, second_laptime} = req.body;
+    const zip_file = req.body.file;
     ////
-    dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime], (error, results) => {
+    dbPool.query(insertQuery, [team_name, team_code, first_laptime, second_laptime, zip_file], (error, results) => {
         if(error){
             res.status(500).json({
                 success: false,
