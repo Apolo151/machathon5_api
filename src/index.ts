@@ -3,24 +3,8 @@ import cors from 'cors';
 
 const bodyParser = require('body-parser')
 const path = require("path");
-const multer  = require('multer')
-//const upload = multer({ dest: './' })
+
 require('dotenv').config();
-
-var storage = multer.diskStorage({
-    destination: function (req:any, file:any, cb:any) {
-  
-      cb(null, path.join(__dirname, "../uploads"))
-    },
-
-    filename: function (req:any, file:any, cb:any) {
-  
-      cb(null, file.originalname)
-    }
-})
-
-var upload = multer({ storage: storage });
-
 
 import { Pool } from 'pg';
 
@@ -35,14 +19,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // insert team score into the database
-app.post('/scores', upload.any(), (req, res) => {
+app.post('/scores', (req, res) => {
+    console.log(req.body);
     res.setHeader("Access-Control-Allow-Origin", "*");
     // insert into database
     const insertQuery = 'INSERT INTO stp.machathon_scores (team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, NOW());';
-    const {team_code, first_laptime, second_laptime} = JSON.parse(req.body.body);
-    const zip_file = req.body.file;
+    const {team_code, first_laptime, second_laptime, solution_file} = req.body;
     //
-    dbPool.query(insertQuery, [team_code, first_laptime, second_laptime, zip_file], (error, results) => {
+    dbPool.query(insertQuery, [team_code, first_laptime, second_laptime, solution_file], (error, results) => {
         if(error){
             res.status(500).json({
                 success: false,
