@@ -46,7 +46,7 @@ app.post('/scores', (req, res) => {
 // Get all database scores
 app.get('/scores', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    dbPool.query('SELECT mt.team_name, ms.total_laptime FROM stp.machathon_scores ms JOIN stp.machathon_teams mt ON ms.team_code=mt.team_code;', (error, results) => {
+    dbPool.query('SELECT mt.team_name, best_laptime FROM stp.machathon_teams mt JOIN ( SELECT team_code, MIN(total_laptime) AS best_laptime FROM stp.machathon_scores GROUP BY team_code) AS best_laptimes ON mt.team_code = best_laptimes.team_code;', (error, results) => {
         if(error){
             res.status(500).json({
                 success: false,
