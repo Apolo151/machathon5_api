@@ -16,3 +16,36 @@ Competitors will be able to see their scores and ranking through the competition
 - Insert a submission into the database
 #### /scores GET
 - Get all machathon submissions in the database
+
+
+## Local Setup
+
+- make sure you have [NodeJS](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs) and [PostgreSQL](https://www.postgresqltutorial.com/postgresql-getting-started/) installed
+
+> using [nvm](https://nodejs.org/en/download/package-manager) is recommended for installing node
+
+- Clone repo
+```bash
+git clone https://github.com/Apolo151/machathon5_api.git
+```
+
+- install node modules
+```bash
+npm install
+```
+
+- create a .env file and add needed environment variables
+
+```bash
+touch .env
+```
+```bash
+# example .env file
+DB_CONNECTION_STRING='YOUR DATABASE CONNECTION STRING'
+SERVER_PORT=3000 # the port on which the servers listens to connections
+```
+- run server in development mode
+
+```bash
+npm run start-dev
+```
