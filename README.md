@@ -11,11 +11,6 @@ Competitors solutions get submitted by sending a request to the API to store the
 
 ### Leaderboard
 Competitors will be able to see their scores and ranking through the competitions leaderboard [here]()(addlink).
-## Endpoints
-#### /scores POST
-- Insert a submission into the database
-#### /scores GET
-- Get all machathon submissions in the database
 
 
 ## Local Setup
