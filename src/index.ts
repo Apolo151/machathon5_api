@@ -4,7 +4,6 @@ import cors from 'cors';
 
 const bodyParser = require('body-parser')
 const { body, validationResult } = require('express-validator');
-const path = require("path");
 
 require('dotenv').config();
 
@@ -177,7 +176,8 @@ app.get('/cron', (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     console.log("WAKE UP");
     res.status(200).json({
-        state: "success"
+        state: "success",
+        msg: "I am awake"
     });
 })
 
@@ -190,7 +190,4 @@ const errHandler: ErrorRequestHandler = (error, req, res, next) => {
 }
 app.use(errHandler);
 
-// Run server on server port 
-app.listen(process.env.SERVER_PORT, () => {
-    console.log(`Listening on port ${process.env.SERVER_PORT}`)}
-    );
+module.exports = app;
