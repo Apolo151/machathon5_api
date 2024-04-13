@@ -24,6 +24,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/pg": "^8.11.0",
+    "dbmate": "^2.14.0",
     "nodemon": "^3.0.3"
   }
 }
