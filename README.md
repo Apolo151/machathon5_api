@@ -48,7 +48,7 @@ touch .env
 ```
 ```bash
 # example .env file
-DB_CONNECTION_STRING='YOUR DATABASE CONNECTION STRING'
+DATABASE_URL='YOUR DATABASE CONNECTION STRING'
 SERVER_PORT=3000 # the port on which the servers listens to connections
 ```
 - run server in development mode
