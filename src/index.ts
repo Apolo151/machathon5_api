@@ -9,7 +9,7 @@ require('dotenv').config();
 import { Pool } from 'pg';
 
 export const dbPool = new Pool({
-    connectionString: process.env.DB_CONNECTION_STRING
+    connectionString: process.env.DATABASE_URL
 });
 
 const app = express();
