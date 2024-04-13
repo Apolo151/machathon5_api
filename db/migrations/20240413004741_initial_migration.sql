@@ -1,6 +1,8 @@
 -- migrate:up
 
-CREATE TABLE summit (
+CREATE SCHEMA machathon;
+
+CREATE TABLE machathon.summit (
   name VARCHAR (50) NOT NULL,
   phone VARCHAR(20) NOT NULL,
   email VARCHAR (255) PRIMARY KEY,
@@ -11,7 +13,7 @@ CREATE TABLE summit (
   created_at TIMESTAMP NOT NULL
 );
 
-CREATE TABLE autonomous_submissions (
+CREATE TABLE machathon.autonomous_submissions (
 team_code VARCHAR (50),
 first_laptime NUMERIC(10, 5) NOT NULL,
 second_laptime NUMERIC(10, 5) NOT NULL,
@@ -21,13 +23,13 @@ created_at TIMESTAMP NOT NULL,
 PRIMARY KEY (team_code, created_at)
 );
 
-CREATE TABLE autonomous_teams (
+CREATE TABLE machathon.autonomous_teams (
 team_name VARCHAR(50) NOT NULL,
 team_code VARCHAR(50) PRIMARY KEY
 );
 
 
 -- migrate:down
-DROP TABLE summit;
-DROP TABLE autonomous_submissions;
-DROP TABLE autonomous_teams;
+DROP TABLE machathon.summit;
+DROP TABLE machathon.autonomous_submissions;
+DROP TABLE machathon.autonomous_teams;
