@@ -56,6 +56,10 @@ SERVER_PORT=3000 # the port on which the servers listens to connections
 ```bash
 npm run start-dev
 ```
+- run unit tests
+```bash
+npm run test:unit
+```
 
 ## Future Plan/Improvements
 
