@@ -1,140 +1,85 @@
-import express, { RequestHandler, ErrorRequestHandler } from "express";
+import express from "express";
 import cors from "cors";
 
 const bodyParser = require("body-parser");
-const { body, validationResult } = require("express-validator");
 
 require("dotenv").config();
 
-import { Pool } from "pg";
-import { insertAttendee } from "./controllers/summit";
-import {
-  getAllAutonomousTeams,
-  getAllSubmissions,
-  getTopScores,
-  insertTeam,
-} from "./controllers/autonomous";
+import { SummitController } from "./controllers/summit";
+import { AutonomousCompetitionController } from "./controllers/autonomous";
 import { validateAttendeeDataMiddleware } from "./middleware/validate-attendee-middleware";
 import { errorHandlerMiddleWare } from "./middleware/error-middleware";
+import { checkServer } from "./controllers/misc";
+import { db, initDb } from "./datastore";
 
-export const dbPool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+export async function createServer() {
+  await initDb();
 
-const app = express();
+  const app = express();
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+  // Middlewares
+  app.use(cors());
+  app.use(express.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
 
-/*-----Summit-----*/
-// insert attendee into database
-app.post("/summit/attendees", validateAttendeeDataMiddleware, (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  const errors = validationResult(req);
-  // validate data
-  if (!errors.isEmpty()) {
-    return res.status(400).json({
-      success: false,
-      errors: errors.array(),
-    });
-  }
-  // insert into database
-  const insertQuery =
-    "INSERT INTO machathon.summit VALUES ($1, $2, $3, $4, $5, $6, $7, NOW());";
-  const {
-    name,
-    phone_number,
-    email,
-    national_id,
-    university,
-    faculty,
-    grad_year,
-  } = req.body;
-  //
-  dbPool.query(
-    insertQuery,
-    [name, phone_number, email, national_id, university, faculty, grad_year],
-    (error, results) => {
-      if (error) {
-        res.status(500).json({
-          success: false,
-          message: "internal error, try again later", //error.message
-        });
-        throw error;
-      } else {
-        res.status(200).json({
-          success: true,
-          message: "successful registration",
-        });
-      }
-    }
+  const summitController = new SummitController(db);
+  const autonomousCompetitionController = new AutonomousCompetitionController(
+    db
   );
-});
 
-// Get all registered summit attendees
-app.get("/summit/attendees", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  dbPool.query("SELECT * FROM machathon.summit;", (error, results) => {
-    if (error) {
-      res.status(500).json({
-        success: false,
-        message: "internal server error",
-      });
-      console.log(error);
-      //throw error;
-    } else {
-      res.status(200).json(results.rows);
-    }
-  });
-});
+  /*-----Summit-----*/
+  // insert attendee into database
+  app.post(
+    "/summit/attendees",
+    validateAttendeeDataMiddleware,
+    summitController.insertAttendee
+  );
 
-// an endpoint to check if the user already exists in the database
-app.get("/summit/attendees", async (req, res) => {
-  const email: string = decodeURI(req.query.email as string);
-  console.log(email);
-  const nID = req.query.nid;
-  const qu = "SELECT * FROM machathon.summit WHERE email=$1 OR national_id=$2;";
-  //
-  dbPool.query(qu, [email, nID], (error, results) => {
-    if (error) {
-      throw error;
-    }
-    res.status(200).json(results.rows);
-  });
-});
+  // Get all registered summit attendees
+  app.get("/summit/attendees", summitController.getAllAttendees);
 
-/*-----Competition-----*/
+  // an endpoint to check if the user already exists in the database
+  app.get("/summit/attendees", summitController.getAttendeebyMail);
 
-// insert team submission into the database
-app.post("/autonomous-race/submissions", insertAttendee);
+  /*-----Competition-----*/
 
-// Get all teams submissions
-app.get("/autonomous-race/submissions", getAllSubmissions);
+  // insert team submission into the database
+  app.post(
+    "/autonomous-race/submissions",
+    autonomousCompetitionController.insertSubmission
+  );
 
-// Get Top scores
-app.get("/autonomous-race/top-scores", getTopScores);
+  // Get all teams submissions
+  app.get(
+    "/autonomous-race/submissions",
+    autonomousCompetitionController.getAllSubmissions
+  );
 
-// get all registered teams
-app.get("/autonomous-race/teams", getAllAutonomousTeams);
+  // Get Top scores
+  app.get(
+    "/autonomous-race/top-scores",
+    autonomousCompetitionController.getTopScores
+  );
 
-// Add a new team
-app.post("/autonomous-race/teams", insertTeam);
+  // get all registered teams
+  app.get(
+    "/autonomous-race/teams",
+    autonomousCompetitionController.getAllAutonomousTeams
+  );
 
-/*-----Other-----*/
-// A cron job endpoint for health check and to keep the server running if needed
-app.get("/cron", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  console.log("WAKE UP");
-  res.status(200).json({
-    state: "success",
-    msg: "I am awake",
-  });
-});
+  // Add a new team
+  app.post(
+    "/autonomous-race/teams",
+    autonomousCompetitionController.insertTeam
+  );
 
-// Report server errors
-app.use(errorHandlerMiddleWare);
+  /*-----Other-----*/
+  // A cron job endpoint for health check and to keep the server running if needed
+  app.get("/cron", checkServer);
 
-module.exports = app;
+  // Report server errors
+  app.use(errorHandlerMiddleWare);
+
+  return app;
+}

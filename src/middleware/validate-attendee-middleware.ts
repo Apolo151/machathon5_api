@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+const { body } = require("express-validator");
 
 const isYearValid = (year: number): boolean => {
   if (year > 2033 || year < 1990) {
@@ -9,19 +10,19 @@ const isYearValid = (year: number): boolean => {
 
 export const validateAttendeeDataMiddleware: RequestHandler = (
   req,
-  res,
+  _,
   next
 ) => {
-  req.body("email").isEmail().normalizeEmail(),
-    req.body("national_id").isLength({
+  body("email").isEmail().normalizeEmail(),
+    body("national_id").isLength({
       min: 14,
       max: 14,
     }),
-    req.body("national_id").isInt(),
-    req.body("name").isString(),
-    req.body("phone_number").matches(/^01[0-2,5]\d{8}$/),
-    req.body("university").isString(),
-    req.body("faculty").isString(),
-    isYearValid(req.body("grad_year")),
+    body("national_id").isInt(),
+    body("name").isString(),
+    body("phone_number").matches(/^01[0-2,5]\d{8}$/),
+    body("university").isString(),
+    body("faculty").isString(),
+    isYearValid(body("grad_year")),
     next();
 };
