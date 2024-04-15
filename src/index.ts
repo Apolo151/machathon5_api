@@ -8,6 +8,8 @@ const { body, validationResult } = require('express-validator');
 require('dotenv').config();
 
 import { Pool } from 'pg';
+import { insertAttendee } from './controllers/summit';
+import { getAllAutonomousTeams, getAllSubmissions, getAllTeams, getTopScores, insertTeam } from './controllers/autonomous';
 
 export const dbPool = new Pool({
     connectionString: process.env.DATABASE_URL
@@ -112,63 +114,19 @@ app.get('/summit/attendees', async (req, res) => {
 /*-----Competition-----*/
 
 // insert team submission into the database
-app.post('/autonomous-race/submissions', (req, res) => {
-    console.log(req.body);
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    // insert into database
-    const insertQuery = 'INSERT INTO machathon.autonomous_submissions (team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, NOW());';
-    const {team_code, first_laptime, second_laptime, solution_file} = req.body;
-    //
-    dbPool.query(insertQuery, [team_code, first_laptime, second_laptime, solution_file], (error, results) => {
-        if(error){
-            res.status(500).json({
-                success: false,
-                message: "internal error, try again later" //error.message
-            })
-            throw error;
-        }
-        else{
-            res.status(200).json({
-                success: true,
-                message: 'successful registration'
-            })
-        }
-    })
-});
+app.post('/autonomous-race/submissions', insertAttendee);
 
 // Get all teams submissions
-app.get('/autonomous-race/submissions', (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    // TODO: query database to get results
-})
+app.get('/autonomous-race/submissions', getAllSubmissions)
 
 // Get Top scores
-app.get('/autonomous-race/top-scores', (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    dbPool.query('SELECT mat.team_name, best_laptime FROM machathon.autonomous_teams mat JOIN ( SELECT team_code, MIN(total_laptime) AS best_laptime FROM machathon.autonomous_submissions GROUP BY team_code) AS best_laptimes ON mat.team_code = best_laptimes.team_code;', (error, results) => {
-        if(error){
-            res.status(500).json({
-                success: false,
-                message: 'internal server error'
-            });
-            console.log(error);
-            //throw error;
-        }
-        else{
-            res.status(200).json(results.rows);
-        }
-    })
-});
+app.get('/autonomous-race/top-scores', getTopScores);
 
 // get all registered teams
-app.get('/autonomous-race/teams', (req, res) => {
-    // TODO
-})
+app.get('/autonomous-race/teams', getAllAutonomousTeams)
 
 // Add a new team
-app.post('/autonomous-race/teams', (req, res) => {
-    // TODO
-})
+app.post('/autonomous-race/teams', insertTeam)
 
 /*-----Other-----*/
 // A cron job endpoint for health check and to keep the server running if needed
