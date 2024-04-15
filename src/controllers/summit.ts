@@ -41,7 +41,6 @@ export class SummitController {
       registeredAt: Date.now(),
     };
     const results = await this.db.createAttendee(attendee);
-    console.log(results);
     return res.sendStatus(200);
   };
 
@@ -50,7 +49,7 @@ export class SummitController {
   };
 
   getAttendeebyMail: RequestHandler = async (req, res) => {
-    const email: string = decodeURI(req.query.email as string);
+    const email: string = decodeURI(req.params.email as string);
     //
     return res.send({ attendee: await this.db.getAttendeeByEmail(email) });
   };

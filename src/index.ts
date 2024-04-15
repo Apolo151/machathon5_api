@@ -40,7 +40,7 @@ export async function createServer() {
   app.get("/summit/attendees", summitController.getAllAttendees);
 
   // an endpoint to check if the user already exists in the database
-  app.get("/summit/attendees", summitController.getAttendeebyMail);
+  app.get("/summit/attendees/:email", summitController.getAttendeebyMail);
 
   /*-----Competition-----*/
 
