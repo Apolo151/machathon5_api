@@ -12,10 +12,18 @@ export interface Attendee {
 export interface CompetitionTeam {
   teamName: string;
   teamCode: string;
+  registeredAt: number;
 }
 
 export interface AutonomousSubmission {
   teamCode: string;
   firstLaptime: number;
   secondLaptime: number;
+  totalLaptime: number;
+  submissionTime: number;
+}
+
+export interface AutonomousScore {
+  teamName: string;
+  totalLaptime: number;
 }
