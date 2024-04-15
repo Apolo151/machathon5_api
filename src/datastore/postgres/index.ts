@@ -1,18 +1,25 @@
 import { Datastore } from "..";
 import { Pool, QueryResult } from "pg";
-import { Attendee, CompetitionTeam, AutonomousSubmission } from "../../types";
+import {
+  Attendee,
+  CompetitionTeam,
+  AutonomousSubmission,
+  AutonomousScore,
+} from "../../types";
 
 require("dotenv").config();
 
 export class SqlDataStore implements Datastore {
   private dbPool!: Pool;
-
+  // setup Database connection
   connectToDB() {
     this.dbPool = new Pool({
       connectionString: process.env.DATABASE_URL,
     });
     return this;
   }
+
+  // Summit
   async createAttendee(attendee: Attendee): Promise<QueryResult<any>> {
     const insertQuery =
       "INSERT INTO machathon.summit VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
@@ -70,22 +77,92 @@ export class SqlDataStore implements Datastore {
     };
     return attendee;
   }
-  getTeamByNid(_nationalID: number): Promise<Attendee | undefined> {
-    throw new Error("Method not implemented.");
+
+  // Teams
+  async createTeam(team: CompetitionTeam): Promise<void> {
+    const insertQuery =
+      "INSERT INTO machathon.autonomous_teams VALUES ($1, $2, $3);";
+    await this.dbPool.query(insertQuery, [
+      team.teamCode,
+      team.teamName,
+      Date.now(),
+    ]);
+    return;
   }
-  createTeam(_team: CompetitionTeam): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  async getAllTeams(): Promise<CompetitionTeam[]> {
+    const teams: CompetitionTeam[] = [];
+    const selectQuery = "SELECT * from machathon.autonomous_teams;";
+    const results = await this.dbPool.query(selectQuery);
+    results.rows.forEach((row) => {
+      teams.push({
+        teamCode: row.team_code,
+        teamName: row.team_name,
+        registeredAt: row.registered_at,
+      });
+    });
+    return teams;
   }
-  getAllTeams(): Promise<CompetitionTeam[]> {
-    throw new Error("Method not implemented.");
+
+  // Submissions
+  async getAllSubmissions(): Promise<AutonomousSubmission[]> {
+    const submissions: AutonomousSubmission[] = [];
+    const selectQuery = "SELECT * FROM machathon.autonomous_submissions;";
+    const results = await this.dbPool.query(selectQuery);
+    results.rows.forEach((row) => {
+      submissions.push({
+        teamCode: row.team_code,
+        firstLaptime: row.first_laptime,
+        secondLaptime: row.second_laptime,
+        totalLaptime: row.total_laptime,
+        submissionTime: row.submmitted_at,
+      });
+    });
+    return submissions;
   }
-  createSubmission(_teamSubmission: AutonomousSubmission): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  async createSubmission(teamSubmission: AutonomousSubmission): Promise<void> {
+    // insert into database
+    const insertQuery = `INSERT INTO machathon.autonomous_submissions 
+    (team_code, first_laptime, second_laptime, created_at) 
+    VALUES ($1, $2, $3, $4);`;
+    await this.dbPool.query(insertQuery, [
+      teamSubmission.teamCode,
+      teamSubmission.firstLaptime,
+      teamSubmission.secondLaptime,
+      teamSubmission.submissionTime,
+    ]);
   }
-  getTeamSubmissions(_teamCode: string): Promise<AutonomousSubmission[]> {
-    throw new Error("Method not implemented.");
+
+  async getTeamSubmissions(teamCode: string): Promise<AutonomousSubmission[]> {
+    const submissions: AutonomousSubmission[] = [];
+    const selectQuery =
+      "SELECT * FROM machathon.autonomous_submission WHERE team_code = $1;";
+    const results = await this.dbPool.query(selectQuery, [teamCode]);
+    results.rows.forEach((row) => {
+      submissions.push({
+        teamCode: row.team_code,
+        firstLaptime: row.first_laptime,
+        secondLaptime: row.second_laptime,
+        totalLaptime: row.total_laptime,
+        submissionTime: row.submmitted_at,
+      });
+    });
+    return submissions;
   }
-  getTopScores(): Promise<AutonomousSubmission[]> {
-    throw new Error("Method not implemented.");
+
+  async getTopScores(): Promise<AutonomousScore[]> {
+    const scores: AutonomousScore[] = [];
+    const query = `SELECT mat.team_name, best_laptime FROM machathon.autonomous_teams mat JOIN 
+    (SELECT team_code, MIN(total_laptime) AS best_laptime FROM machathon.autonomous_submissions
+    GROUP BY team_code) AS best_laptimes ON mat.team_code = best_laptimes.team_code;`;
+    const results = await this.dbPool.query(query);
+    results.rows.forEach((row) => {
+      scores.push({
+        teamName: row.team_name,
+        totalLaptime: row.best_laptime,
+      });
+    });
+    return scores;
   }
 }

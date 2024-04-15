@@ -18,7 +18,7 @@ team_code VARCHAR (50),
 first_laptime NUMERIC(10, 5) NOT NULL,
 second_laptime NUMERIC(10, 5) NOT NULL,
 total_laptime NUMERIC(10, 5) GENERATED ALWAYS AS (first_laptime + second_laptime) STORED,
-submitted_at TIMESTAMP NOT NULL,
+submitted_at NUMERIC NOT NULL,
 PRIMARY KEY (team_code, submitted_at)
 );
 

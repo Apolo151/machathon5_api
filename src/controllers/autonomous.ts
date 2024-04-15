@@ -1,4 +1,5 @@
 import { Datastore, db } from "../datastore";
+import { AutonomousSubmission, AutonomousScore } from "../types";
 import { RequestHandler } from "express";
 
 export class AutonomousCompetitionController {
@@ -8,47 +9,48 @@ export class AutonomousCompetitionController {
     this.db = db;
   }
 
-  public insertSubmission: RequestHandler = (req, res) => {
-    // insert into database
-    const insertQuery =
-      "INSERT INTO machathon.autonomous_submissions (team_code, first_laptime, second_laptime, zip_file, created_at) VALUES ($1, $2, $3, $4, NOW());";
-    const { team_code, first_laptime, second_laptime, solution_file } =
-      req.body;
-    // TODO: implement
-    //this.db.createSubmission();
+  public insertSubmission: RequestHandler = async (req, res) => {
+    const { team_code, first_laptime, second_laptime } = req.body;
+    const submission: AutonomousSubmission = {
+      teamCode: team_code,
+      firstLaptime: first_laptime,
+      secondLaptime: second_laptime,
+      totalLaptime: first_laptime + second_laptime,
+      submissionTime: Date.now(),
+    };
+    await this.db.createSubmission(submission);
     return res.sendStatus(200);
   };
 
   public getTopScores: RequestHandler = (req, res) => {
-    this.db;
-    /*.dbPool.query(
-      `SELECT mat.team_name, best_laptime FROM machathon.autonomous_teams mat JOIN 
-          (SELECT team_code, MIN(total_laptime) AS best_laptime FROM machathon.autonomous_submissions
-          GROUP BY team_code) AS best_laptimes ON mat.team_code = best_laptimes.team_code;`,
-      (error: any, results: any) => {
-        if (error) {
-          res.status(500).json({
-            success: false,
-            message: "internal server error",
-          });
-          console.log(error);
-          //throw error;
-        } else {
-          res.status(200).json(results.rows);
-        }
-      }
-    );
-  };*/
-  };
-  public getAllSubmissions: RequestHandler = (req, res) => {
-    // TODO: query database to get results
+    const scores = this.db.getTopScores();
+    res.status(200).json(scores);
   };
 
-  public getAllAutonomousTeams: RequestHandler = (req, res) => {
-    // TODO
+  public getAllSubmissions: RequestHandler = async (req, res) => {
+    const submissions = await this.db.getAllSubmissions();
+    res.status(200).json(submissions);
   };
 
-  public insertTeam: RequestHandler = (req, res) => {
-    // TODO
+  public getTeamSubmissions: RequestHandler = async (req, res) => {
+    const { team_code } = req.params;
+    const submissions = await this.db.getTeamSubmissions(team_code);
+    res.status(200).json(submissions);
+  };
+
+  public getAllAutonomousTeams: RequestHandler = async (req, res) => {
+    const teams = await this.db.getAllTeams();
+    res.status(200).json(teams);
+  };
+
+  public insertTeam: RequestHandler = async (req, res) => {
+    const { team_name, team_code } = req.body;
+    const team = {
+      teamName: team_name,
+      teamCode: team_code,
+      registeredAt: Date.now(),
+    };
+    await this.db.createTeam(team);
+    return res.sendStatus(200);
   };
 }
