@@ -1,6 +1,6 @@
 import { CompetitionTeam } from "../../types";
 
 export interface CompetitionTeamDao {
-    createTeam(team: CompetitionTeam): void;
-    getAllTeams(): CompetitionTeam[];
+    createTeam(team: CompetitionTeam): Promise<void>;
+    getAllTeams(): Promise<CompetitionTeam[]>;
 }
