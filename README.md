@@ -1,28 +1,32 @@
 # machathon5_api
+
 A REST API for the [Machathon 5.00 Tech Summit](https://www.linkedin.com/posts/stpegypt_stpabr24-teleportabrgate-machathon5abr00-activity-7181986298155454464-BLiN?utm_source=share&utm_medium=member_desktop) and its competitions.
 
 This api will interact with various services as needed, such as:
+
 - summit registration form - [link](https://summit-form-frontend.vercel.app/)
 - competition leaderboard - [link](https://stp-frontend-leaderboard.onrender.com/)
 - Submission requests coming for competition simulator - [Simulator link](https://github.com/Apolo151/machathon5.00-judge?tab=readme-ov-file)
 
 > Note: The event has successfully ended, so the official data has been removed, the current data is just dummy data for presentation.
 
-
 ## Functionality
 
 ### Event Registration
+
 Event attendees will be able to register for the event through a web form.
 
 ### Competition Registration (TBD)
+
 Teams will be able to register for any competition in the event through a web form.
 
 ### Competition Submission
+
 Competitors solutions get submitted by sending a request to the API to store the submission in the database.
 
 ### Leaderboard
-Competitors will be able to see their scores and ranking through the competitions leaderboard.
 
+Competitors will be able to see their scores and ranking through the competitions leaderboard.
 
 ## Local Setup
 
@@ -31,12 +35,14 @@ Competitors will be able to see their scores and ranking through the competition
 > using [nvm](https://nodejs.org/en/download/package-manager) is recommended for installing node
 
 - Clone repo
+
 ```bash
 git clone https://github.com/Apolo151/machathon5_api.git
 cd machathon5_api
 ```
 
 - install node modules
+
 ```bash
 npm install
 ```
@@ -46,17 +52,21 @@ npm install
 ```bash
 touch .env
 ```
+
 ```bash
 # example .env file
 DATABASE_URL='YOUR DATABASE CONNECTION STRING'
 SERVER_PORT=3000 # the port on which the servers listens to connections
 ```
+
 - run server in development mode
 
 ```bash
 npm run start-dev
 ```
+
 - run unit tests
+
 ```bash
 npm run test:unit
 ```
