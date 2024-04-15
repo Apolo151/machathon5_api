@@ -33,3 +33,5 @@ team_code VARCHAR(50) PRIMARY KEY
 DROP TABLE machathon.summit;
 DROP TABLE machathon.autonomous_submissions;
 DROP TABLE machathon.autonomous_teams;
+
+DROP SCHEMA IF EXISTS machathon;
