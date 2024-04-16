@@ -124,7 +124,7 @@ export class SqlDataStore implements Datastore {
   async createSubmission(teamSubmission: AutonomousSubmission): Promise<void> {
     // insert into database
     const insertQuery = `INSERT INTO machathon.autonomous_submissions 
-    (team_code, first_laptime, second_laptime, created_at) 
+    (team_code, first_laptime, second_laptime, submitted_at) 
     VALUES ($1, $2, $3, $4);`;
     await this.dbPool.query(insertQuery, [
       teamSubmission.teamCode,
