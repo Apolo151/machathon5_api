@@ -23,8 +23,8 @@ PRIMARY KEY (team_code, submitted_at)
 );
 
 CREATE TABLE machathon.autonomous_teams (
-team_name VARCHAR(50) NOT NULL,
-team_code VARCHAR(50) PRIMARY KEY,
+team_code VARCHAR(50) NOT NULL,
+team_name VARCHAR(50) PRIMARY KEY,
 registered_at NUMERIC NOT NULL
 );
 
