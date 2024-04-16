@@ -9,6 +9,33 @@ export class AutonomousCompetitionController {
     this.db = db;
   }
 
+  public getAllAutonomousTeams: RequestHandler = async (req, res) => {
+    const teams = await this.db.getAllTeams();
+    res.status(200).json({ teams });
+  };
+
+  public insertTeam: RequestHandler = async (req, res) => {
+    const { team_name, team_code } = req.body;
+    const team = {
+      teamName: team_name,
+      teamCode: team_code,
+      registeredAt: Date.now(),
+    };
+    await this.db.createTeam(team);
+    return res.sendStatus(200);
+  };
+
+  public getAllSubmissions: RequestHandler = async (req, res) => {
+    const submissions = await this.db.getAllSubmissions();
+    res.status(200).json({ submissions });
+  };
+
+  public getTeamSubmissions: RequestHandler = async (req, res) => {
+    const { team_code } = req.params;
+    const submissions = await this.db.getTeamSubmissions(team_code);
+    res.status(200).json({ submissions });
+  };
+
   public insertSubmission: RequestHandler = async (req, res) => {
     const { team_code, first_laptime, second_laptime } = req.body;
     const submission: AutonomousSubmission = {
@@ -22,35 +49,8 @@ export class AutonomousCompetitionController {
     return res.sendStatus(200);
   };
 
-  public getTopScores: RequestHandler = (req, res) => {
-    const scores = this.db.getTopScores();
-    res.status(200).json(scores);
-  };
-
-  public getAllSubmissions: RequestHandler = async (req, res) => {
-    const submissions = await this.db.getAllSubmissions();
-    res.status(200).json(submissions);
-  };
-
-  public getTeamSubmissions: RequestHandler = async (req, res) => {
-    const { team_code } = req.params;
-    const submissions = await this.db.getTeamSubmissions(team_code);
-    res.status(200).json(submissions);
-  };
-
-  public getAllAutonomousTeams: RequestHandler = async (req, res) => {
-    const teams = await this.db.getAllTeams();
-    res.status(200).json(teams);
-  };
-
-  public insertTeam: RequestHandler = async (req, res) => {
-    const { team_name, team_code } = req.body;
-    const team = {
-      teamName: team_name,
-      teamCode: team_code,
-      registeredAt: Date.now(),
-    };
-    await this.db.createTeam(team);
-    return res.sendStatus(200);
+  public getTopScores: RequestHandler = async (req, res) => {
+    const scores = await this.db.getTopScores();
+    res.status(200).json({ scores });
   };
 }

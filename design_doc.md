@@ -53,6 +53,7 @@ A simple HTTP server is responsible for storing and serving data in and from the
 
 ```bash
 /summit/attendees [GET]
+/summit/attendees/:email [GET]
 /summit/attendees [POST]
 ```
 
@@ -62,8 +63,15 @@ A simple HTTP server is responsible for storing and serving data in and from the
 /autonomous-race/teams [GET]
 /autonomous-race/teams [POST]
 /autonomous-race/submissions [GET]
+/autonomous-race/submissions/:team_code [GET]
 /autonomous-race/submissions [POST]
 /autonomous-race/top-scores [GET]
+```
+
+#### Other
+
+```bash
+/cron [GET] # health check
 ```
 
 ## Hosting
