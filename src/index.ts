@@ -29,38 +29,21 @@ export async function createServer() {
   );
 
   /*-----Summit-----*/
-  // insert attendee into database
+
+  // get all registered summit attendees
+  app.get("/summit/attendees", summitController.getAllAttendees);
+
+  // check if user is already registered
+  app.get("/summit/attendees/:email", summitController.getAttendeebyMail);
+
+  // add a new attendee
   app.post(
     "/summit/attendees",
     validateAttendeeDataMiddleware,
     summitController.insertAttendee
   );
 
-  // Get all registered summit attendees
-  app.get("/summit/attendees", summitController.getAllAttendees);
-
-  // an endpoint to check if the user already exists in the database
-  app.get("/summit/attendees/:email", summitController.getAttendeebyMail);
-
   /*-----Competition-----*/
-
-  // insert team submission into the database
-  app.post(
-    "/autonomous-race/submissions",
-    autonomousCompetitionController.insertSubmission
-  );
-
-  // Get all teams submissions
-  app.get(
-    "/autonomous-race/submissions",
-    autonomousCompetitionController.getAllSubmissions
-  );
-
-  // Get Top scores
-  app.get(
-    "/autonomous-race/top-scores",
-    autonomousCompetitionController.getTopScores
-  );
 
   // get all registered teams
   app.get(
@@ -68,17 +51,41 @@ export async function createServer() {
     autonomousCompetitionController.getAllAutonomousTeams
   );
 
-  // Add a new team
+  // add a new team
   app.post(
     "/autonomous-race/teams",
     autonomousCompetitionController.insertTeam
   );
 
+  // get all teams submissions
+  app.get(
+    "/autonomous-race/submissions",
+    autonomousCompetitionController.getAllSubmissions
+  );
+
+  // get all submissions of a specific team
+  app.get(
+    "/autonomous-race/submissions/:team_code",
+    autonomousCompetitionController.getTeamSubmissions
+  );
+
+  // insert team submission into the database
+  app.post(
+    "/autonomous-race/submissions",
+    autonomousCompetitionController.insertSubmission
+  );
+
+  // get Top scores
+  app.get(
+    "/autonomous-race/top-scores",
+    autonomousCompetitionController.getTopScores
+  );
+
   /*-----Other-----*/
-  // A cron job endpoint for health check and to keep the server running if needed
+  // a cron job endpoint for health check and to keep the server running if needed
   app.get("/cron", checkServer);
 
-  // Report server errors
+  // report server errors
   app.use(errorHandlerMiddleWare);
 
   return app;
