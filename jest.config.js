@@ -5,4 +5,6 @@ module.exports = {
   moduleNameMapper: {
     "@exmpl/(.*)": "<rootDir>/src/$1",
   },
+  verbose: true,
+  forceExit: true,
 };
