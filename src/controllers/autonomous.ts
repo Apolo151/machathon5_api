@@ -11,7 +11,7 @@ export class AutonomousCompetitionController {
 
   public getAllAutonomousTeams: RequestHandler = async (req, res) => {
     const teams = await this.db.getAllTeams();
-    res.status(200).json(teams);
+    res.status(200).json({ teams });
   };
 
   public insertTeam: RequestHandler = async (req, res) => {
@@ -27,13 +27,13 @@ export class AutonomousCompetitionController {
 
   public getAllSubmissions: RequestHandler = async (req, res) => {
     const submissions = await this.db.getAllSubmissions();
-    res.status(200).json(submissions);
+    res.status(200).json({ submissions });
   };
 
   public getTeamSubmissions: RequestHandler = async (req, res) => {
     const { team_code } = req.params;
     const submissions = await this.db.getTeamSubmissions(team_code);
-    res.status(200).json(submissions);
+    res.status(200).json({ submissions });
   };
 
   public insertSubmission: RequestHandler = async (req, res) => {
@@ -49,8 +49,8 @@ export class AutonomousCompetitionController {
     return res.sendStatus(200);
   };
 
-  public getTopScores: RequestHandler = (req, res) => {
-    const scores = this.db.getTopScores();
-    res.status(200).json(scores);
+  public getTopScores: RequestHandler = async (req, res) => {
+    const scores = await this.db.getTopScores();
+    res.status(200).json({ scores });
   };
 }
