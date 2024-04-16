@@ -160,7 +160,7 @@ export class SqlDataStore implements Datastore {
     results.rows.forEach((row) => {
       scores.push({
         teamName: row.team_name,
-        totalLaptime: row.best_laptime,
+        totalLaptime: Number(row.best_laptime),
       });
     });
     return scores;

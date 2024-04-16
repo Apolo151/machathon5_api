@@ -8,7 +8,7 @@
     "start-ts": "ts-node ./src/server.ts",
     "build": "npm install && npx tsc",
     "start": "npm run build && node ./dist/server.js",
-    "test:unit": "jest",
+    "test:unit": "jest --detectOpenHandles",
     "test:unit:coverage": "jest --coverage"
   },
   "author": "STP24",
