@@ -16,7 +16,6 @@ export class SqlDataStore implements Datastore {
     this.dbPool = new Pool({
       connectionString: dbString || process.env.TEST_DATABASE_URL,
     });
-    console.log(dbString);
     return this;
   }
 

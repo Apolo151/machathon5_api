@@ -29,7 +29,7 @@ export class SummitController {
       faculty,
       graduation_year,
     } = req.body.attendee;
-    console.log(req.body.attendee);
+
     const attendee: Attendee = {
       fullName: full_name,
       phoneNumber: phone_number,
