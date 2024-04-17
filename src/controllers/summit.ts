@@ -21,27 +21,37 @@ export class SummitController {
     }
     // extract data
     const {
-      name,
+      full_name,
       phone_number,
       email,
       national_id,
       university,
       faculty,
-      grad_year,
-    } = req.body;
-    // insert into database
+      graduation_year,
+    } = req.body.attendee;
+    console.log(req.body.attendee);
     const attendee: Attendee = {
-      fullName: name,
+      fullName: full_name,
       phoneNumber: phone_number,
       email: email,
       nationalID: national_id,
       university: university,
       facutly: faculty,
-      graduationYear: grad_year,
+      graduationYear: graduation_year,
       registeredAt: Date.now(),
     };
-    const results = await this.db.createAttendee(attendee);
-    return res.sendStatus(200);
+    // check if already exists in the database
+    const existingAttendee = await this.db.getAttendeeByEmail(email);
+    if (existingAttendee) {
+      return res.status(400).send({
+        success: false,
+        message: "Attendee already exists",
+        attendee: existingAttendee,
+      });
+    } else {
+      await this.db.createAttendee(attendee);
+      return res.status(200).send({ success: true, attendee: null });
+    }
   };
 
   public getAllAttendees: RequestHandler = async (_req, res) => {
@@ -50,7 +60,10 @@ export class SummitController {
 
   getAttendeebyMail: RequestHandler = async (req, res) => {
     const email: string = decodeURI(req.params.email as string);
-    //TODO: return 404 if no attendee was found
-    return res.send({ attendee: await this.db.getAttendeeByEmail(email) });
+    const attendee = await this.db.getAttendeeByEmail(email);
+    if (!attendee) return res.status(404).send({ attendee: null });
+    else {
+      return res.status(200).send({ attendee });
+    }
   };
 }
