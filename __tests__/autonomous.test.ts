@@ -4,7 +4,7 @@ import { AutonomousScore } from "../src/types";
 
 require("dotenv").config();
 
-const app = createServer();
+const app = createServer(process.env.TEST_DATABASE_URL);
 
 describe("Autonomous competition teams", () => {
   describe("get all teams registered for the competition", () => {

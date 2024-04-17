@@ -12,8 +12,8 @@ import { errorHandlerMiddleWare } from "./middleware/error-middleware";
 import { checkServer } from "./controllers/misc";
 import { db, initDb } from "./datastore";
 
-export async function createServer() {
-  await initDb();
+export async function createServer(dbConnectionString?: string) {
+  await initDb(dbConnectionString);
 
   const app = express();
 

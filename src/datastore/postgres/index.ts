@@ -12,10 +12,11 @@ require("dotenv").config();
 export class SqlDataStore implements Datastore {
   private dbPool!: Pool;
   // setup Database connection
-  connectToDB() {
+  connectToDB(dbString?: string) {
     this.dbPool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: dbString || process.env.TEST_DATABASE_URL,
     });
+    console.log(dbString);
     return this;
   }
 

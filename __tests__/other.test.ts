@@ -3,7 +3,7 @@ import { createServer } from "../src/index";
 
 require("dotenv").config();
 
-const app = createServer();
+const app = createServer(process.env.TEST_DATABASE_URL);
 
 describe("send request to keep server running", () => {
   it("should return 200 & a wake up message", async () => {

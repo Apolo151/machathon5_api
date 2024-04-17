@@ -3,7 +3,7 @@ import { createServer } from "../src/index";
 
 require("dotenv").config();
 
-const app = createServer();
+const app = createServer(process.env.TEST_DATABASE_URL);
 
 describe("Summit", () => {
   describe("get all people registered for the summit", () => {
