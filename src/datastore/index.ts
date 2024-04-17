@@ -10,6 +10,6 @@ export interface Datastore
 
 export let db: Datastore;
 
-export async function initDb() {
-  db = await new SqlDataStore().connectToDB();
+export async function initDb(dbConnectionString?: string) {
+  db = await new SqlDataStore().connectToDB(dbConnectionString);
 }

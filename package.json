@@ -8,8 +8,10 @@
     "start-ts": "ts-node ./src/server.ts",
     "build": "npm install && npx tsc",
     "start": "npm run build && node ./dist/server.js",
-    "test:unit": "jest --detectOpenHandles",
-    "test:unit:coverage": "jest --coverage"
+    "setdb": "npx dbmate -e TEST_DATABASE_URL --no-dump-schema up",
+    "dropdb": "npx dbmate -e TEST_DATABASE_URL drop",
+    "test:unit": "npm run setdb && jest --detectOpenHandles",
+    "test:unit:coverage": "npm run setdb && jest --coverage --detectOpenHandles"
   },
   "author": "STP24",
   "license": "ISC",

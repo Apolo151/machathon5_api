@@ -15,7 +15,7 @@ export class AutonomousCompetitionController {
   };
 
   public insertTeam: RequestHandler = async (req, res) => {
-    const { team_name, team_code } = req.body;
+    const { team_name, team_code } = req.body.team;
     const team = {
       teamName: team_name,
       teamCode: team_code,
