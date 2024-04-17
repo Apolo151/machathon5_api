@@ -1,7 +1,10 @@
 import request from "supertest";
 import { AutonomousScore, CompetitionTeam } from "../src/types";
-import { app } from "./misc.test";
+import { createServer } from "../src/index";
+
 require("dotenv").config();
+
+export const app = createServer(process.env.TEST_DATABASE_URL);
 
 describe("Autonomous competition teams", () => {
   describe("get all teams registered for the competition", () => {
