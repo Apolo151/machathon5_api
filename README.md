@@ -6,9 +6,9 @@ This api will interact with various services as needed, such as:
 
 - summit registration form - [link](https://summit-form-frontend.vercel.app/)
 - competition leaderboard - [link](https://stp-frontend-leaderboard.onrender.com/)
-- Submission requests coming for competition simulator - [Simulator link](https://github.com/Apolo151/machathon5.00-judge?tab=readme-ov-file)
+- Submission requests coming for the competition's simulator - [Simulator link](https://github.com/Apolo151/machathon5.00-judge?tab=readme-ov-file)
 
-> Note: The event has successfully ended, so the official data has been removed, the current data is just dummy data for presentation.
+> Note: The event has successfully ended, so the official data has been removed and the current data is just dummy data for presentation.
 
 ## Functionality
 
@@ -26,13 +26,13 @@ Competitors solutions get submitted by sending a request to the API to store the
 
 ### Leaderboard
 
-Competitors will be able to see their scores and ranking through the competitions leaderboard.
+Competitors will be able to see their scores and rankings through the competition leaderboard.
 
 ## Local Setup
 
 - make sure you have [NodeJS](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs) and [PostgreSQL](https://www.postgresqltutorial.com/postgresql-getting-started/) (or a serverless postgres database on [neon](https://neon.tech/)) installed
 
-> using [nvm](https://nodejs.org/en/download/package-manager) is recommended for installing node
+> using [nvm](https://nodejs.org/en/download/package-manager) is recommended for installing node.
 
 - Clone repo
 
@@ -53,27 +53,48 @@ npm install
 touch .env
 ```
 
+---
+
 ```bash
 # example .env file
 DATABASE_URL='YOUR DATABASE CONNECTION STRING'
-SERVER_PORT=3000 # the port on which the servers listens to connections
+TEST_DATABASE_URL='YOUR TEST DATABASE CONNECTION STRING'
+SERVER_PORT=3000 # the port on which the servers listens to connections on
 ```
 
-- run server in development mode
+### running app
+
+- in development mode
 
 ```bash
 npm run start-dev
 ```
 
+- build and run
+
+```bash
+npm start
+```
+
+### Testing
+
 - run unit tests
 
 ```bash
-npm run test:unit
+npm run test:unit; npm run dropdb
 ```
+
+- run unit tests with code coverage
+
+```bash
+npm run test:unit:coverage; npm run dropdb
+```
+
+> check [jest docs](https://jestjs.io/docs/getting-started).
 
 ## Future Plan/Improvements
 
-- Add Endpoints for teams competition registarion
 - Implement Auth
+- Add Dockerfile
 
-> check [issues](https://github.com/Apolo151/machathon5_api/issues) for a comprehensive list
+> check [issues](https://github.com/Apolo151/machathon5_api/issues) for a comprehensive list.
