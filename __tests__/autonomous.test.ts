@@ -1,10 +1,7 @@
 import request from "supertest";
-import { createServer } from "../src/index";
-import { AutonomousScore } from "../src/types";
-
+import { AutonomousScore, CompetitionTeam } from "../src/types";
+import { app } from "./misc.test";
 require("dotenv").config();
-
-const app = createServer(process.env.TEST_DATABASE_URL);
 
 describe("Autonomous competition teams", () => {
   describe("get all teams registered for the competition", () => {
@@ -19,10 +16,22 @@ describe("Autonomous competition teams", () => {
     });
   });
   describe("register a new team for the competition", () => {
+    const team: CompetitionTeam = {
+      teamName: "team1",
+      teamCode: "55LKJ",
+      registeredAt: Date.now(),
+    };
+    const payload = {
+      team: {
+        team_name: team.teamName,
+        team_code: team.teamCode,
+      },
+    };
+
     it("should add a new team and return 200", async () => {
       return request(await app)
-        .get("/autonomous-race/teams")
-        .expect("Content-Type", /json/)
+        .post("/autonomous-race/teams")
+        .send(payload)
         .expect(200)
         .then((res) => {
           expect(res.statusCode).toBe(200);

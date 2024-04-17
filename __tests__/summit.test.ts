@@ -1,9 +1,6 @@
 import request from "supertest";
-import { createServer } from "../src/index";
-
+import { app } from "./misc.test";
 require("dotenv").config();
-
-const app = createServer(process.env.TEST_DATABASE_URL);
 
 describe("Summit", () => {
   describe("get all people registered for the summit", () => {
