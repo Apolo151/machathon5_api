@@ -86,7 +86,7 @@ export class SqlDataStore implements Datastore {
     await this.dbPool.query(insertQuery, [
       team.teamCode,
       team.teamName,
-      Date.now(),
+      team.registeredAt,
     ]);
     return;
   }

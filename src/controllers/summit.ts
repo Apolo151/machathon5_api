@@ -50,7 +50,7 @@ export class SummitController {
 
   getAttendeebyMail: RequestHandler = async (req, res) => {
     const email: string = decodeURI(req.params.email as string);
-    //
+    //TODO: return 404 if no attendee was found
     return res.send({ attendee: await this.db.getAttendeeByEmail(email) });
   };
 }
