@@ -10,7 +10,9 @@ We will use a relational database (PostgreSQL) to store data.
 
 ### Schema
 
-**Summit Attendees**
+- The following entities are needed:
+
+  **Summit Attendees**
 
 | Column            | Type      |
 | ----------------- | --------- |
@@ -25,19 +27,20 @@ We will use a relational database (PostgreSQL) to store data.
 
 **Teams**
 
-| Column    | Type   |
-| --------- | ------ |
-| team_name | String |
-| team_code | String |
+| Column            | Type      |
+| ----------------- | --------- |
+| team Name         | String    |
+| team Code         | String    |
+| Registration Time | Timestamp |
 
 **Teams Submissions**
 
 | Column         | Type   |
 | -------------- | ------ |
-| team_code      | String |
-| first_laptime  | Float  |
-| second_laptime | Float  |
-| total_laptime  | Float  |
+| team Code      | String |
+| First Laptime  | Float  |
+| Second Laptime | Float  |
+| Total Laptime  | Float  |
 
 ## Server
 
@@ -45,7 +48,6 @@ A simple HTTP server is responsible for storing and serving data in and from the
 
 - The server is implemented using Node.js
 - Express.js is the web framework used
-- Sequelize is used as the ORM
 
 ### API Endpoints
 
@@ -73,6 +75,10 @@ A simple HTTP server is responsible for storing and serving data in and from the
 ```bash
 /cron [GET] # health check
 ```
+
+## Testing
+
+- Jest and supertest will be used for unit testing
 
 ## Hosting
 

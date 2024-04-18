@@ -6,9 +6,11 @@ This api will interact with various services as needed, such as:
 
 - summit registration form - [link](https://summit-form-frontend.vercel.app/)
 - competition leaderboard - [link](https://stp-frontend-leaderboard.onrender.com/)
-- Submission requests coming for the competition's simulator - [Simulator link](https://github.com/Apolo151/machathon5.00-judge?tab=readme-ov-file)
+- Submission requests coming from the competition's simulator - [Simulator link](https://github.com/Apolo151/machathon5.00-judge?tab=readme-ov-file)
 
 > Note: The event has successfully ended, so the official data has been removed and the current data is just dummy data for presentation.
+
+> This repo can be used as a template for anyone wanting to hold a similar event or summit.
 
 ## Functionality
 
