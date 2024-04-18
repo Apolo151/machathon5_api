@@ -51,11 +51,11 @@ export class AutonomousCompetitionController {
 
   public getTopScores: RequestHandler = async (req, res) => {
     const scores = await this.db.getTopScores();
-    const scoresObject: { team_name: string; total_laptime: number }[] = [];
+    const scoresObject: { team_name: string; best_laptime: number }[] = [];
     scores.forEach((score) => {
       scoresObject.push({
         team_name: score.teamName,
-        total_laptime: score.totalLaptime,
+        best_laptime: score.totalLaptime,
       });
     });
     res.status(200).json({ scores: scoresObject });
